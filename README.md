@@ -2,5 +2,7 @@
 
 ## Dependencies
 - Librosa
-- Pretty Midi
 - Matplotlib
+- Numpy
+- Pretty Midi
+- Tqdm
