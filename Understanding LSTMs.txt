@@ -1,0 +1,18 @@
+# Understanding LSTMs 
+
+## LSTM vs RNN
+
+The key difference is in the information these cells are able to store. RNNs only take two pieces of information: a hidden state and an input. LSTMs however are able to take in three different pieces of information: current input, short-term memory from the previous cell (hidden states in RNNs), and long-term memory. 
+
+In terms of terminology, short-term memory is referred to as the "hidden state", and long-term memory is referred to as the "cell state". Each LSTM cell uses gates to regulate information and determine if something should be kept or discarded. Ideally, the role of these gates is to selectively remove irrelevant information. Think of how water filters prevent impurities from passing through. The difficulty is training these gates to accurately filter the useful and the irrelevant. 
+
+There are three gates: **Input**, **Forget**, and **Output**.  
+
+<img src="C:\Users\Richard\OneDrive - University of Toronto\Engineering Science\Year 3\ECE324 - Intro to Machine Learning\Project\image-20201123153857488.png" alt="image-20201123153857488" style="zoom: 67%;" />
+
+### The Input Gate 
+
+Input gate decides what new information will be stored in the long-term memory. It only works with the current input and the short term memory from the previous step. There are two separate layers at play, 
+
+<img src="C:\Users\Richard\OneDrive - University of Toronto\Engineering Science\Year 3\ECE324 - Intro to Machine Learning\Project\image-20201123153953945.png" alt="image-20201123153953945" style="zoom:67%;" />
+
