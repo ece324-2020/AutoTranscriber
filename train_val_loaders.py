@@ -5,6 +5,8 @@ Provides helper functions and classes for music data loaders.
 
 Usage:
 
+    from train_val_loaders import *
+
     mean, std = get_statistics("data_path")
     # data_path should be the directory that contains all of the npy files
 
@@ -188,7 +190,3 @@ def get_data_loaders(train_path, val_path=None, test_path=None, batch_size=1,
         return train_loader, test_loader
     else:
         return train_loader, val_loader, test_loader
-
-train_loader = get_data_loaders(r'C:\Users\antho\OneDrive\Documents\Courses\University\University of Toronto\Third Year\ECE324\Project')
-for data, labels in train_loader:
-    print(labels.shape)
