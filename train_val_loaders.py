@@ -5,7 +5,8 @@ Provides helper functions and classes for music data loaders.
 
 Usage:
 
-    mean, std = get_statistics("train_path")
+    mean, std = get_statistics("data_path")
+    # data_path should be the directory that contains all of the npy files
 
     train_loader, val_loader, test_loader = get_data_loaders("train_path", "val_path", "test_path", batch_size=batch_size, shuffle=True)
     # You can load data from train_path and/or val_path and/or test_path.
@@ -19,7 +20,7 @@ import os
 import pretty_midi
 from torch.utils.data import Dataset, DataLoader
 
-def get_statistics(train_path):
+def get_statistics(data_path):
 
     '''
     Returns the mean and standard deviation across all of the data in
