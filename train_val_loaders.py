@@ -135,7 +135,7 @@ class _MusicDataset(Dataset):
         # Load data label
         midi = pretty_midi.PrettyMIDI(os.path.join(self.dir,'labels',
                                                    self.list_of_data[index][:-3]+'mid'))
-        data_label = midi.get_piano_roll(fs=self.fs)
+        data_label = midi.get_piano_roll(fs=self.fs)[21:109,:]
 
         return data_sample, data_label
 
@@ -188,3 +188,7 @@ def get_data_loaders(train_path, val_path=None, test_path=None, batch_size=1,
         return train_loader, test_loader
     else:
         return train_loader, val_loader, test_loader
+
+train_loader = get_data_loaders(r'C:\Users\antho\OneDrive\Documents\Courses\University\University of Toronto\Third Year\ECE324\Project')
+for data, labels in train_loader:
+    print(labels.shape)
