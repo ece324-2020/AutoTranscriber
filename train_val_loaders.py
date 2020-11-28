@@ -144,12 +144,13 @@ class _MusicDataset(Dataset):
         assert type(index) == int, 'Input argument must be an integer'
         # Get data sample
         data_sample = np.load(os.path.join(self.dir,'data',self.list_of_data[index]))
+        data_sample = data_sample[:,:126] # 126 is for 4 seconds out of 8
         if self.normalize:
             data_sample = (data_sample-self.mean)/self.std
         # Load data label
         midi = pretty_midi.PrettyMIDI(os.path.join(self.dir,'labels',
                                                    self.list_of_data[index][:-3]+'mid'))
-        piano_roll = midi.get_piano_roll(fs=self.fs)[21:109,:]
+        piano_roll = midi.get_piano_roll(fs=self.fs)[21:109,:124] # 124 is for 4 seconds out of 8
         data_label = np.where(piano_roll > 0, 1, 0)
 
         return data_sample, data_label
