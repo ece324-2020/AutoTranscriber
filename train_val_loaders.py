@@ -38,23 +38,23 @@ def get_statistics(data_path):
                 training data
     '''
 
-    if type(train_path) != str:
+    if type(data_path) != str:
         raise TypeError('Input argument must be a string.')
-    if os.path.isdir(train_path) == False:
+    if os.path.isdir(data_path) == False:
         raise ValueError('Input argument must point to a valid directory.')
 
-    training_data = []
+    data = []
     
     # Store all training data in one list
-    for file in os.listdir(train_path):
+    for file in os.listdir(data_path):
 
         if file.endswith('.npy'):
-            training_data.append(np.load(file))
+            data.append(np.load(os.path.join(data_path,file)))
 
     # Compute the mean and standard deviation
-    training_array = np.stack(training_data)
-    mean = np.mean(training_array)
-    std = np.std(training_array)
+    data_array = np.stack(data)
+    mean = np.mean(data_array)
+    std = np.std(data_array)
 
     return mean, std
 
