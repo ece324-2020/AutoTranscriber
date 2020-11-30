@@ -37,19 +37,24 @@ Therefore, if we want perfect index matching, we do not need to set an argument 
 import torch 
 import numpy as np
 
-def elementacc(prediction, label, batch_size):
+def elementacc(prediction, label):
   pred_np = prediction.numpy()
   label_np = label.numpy() 
-  #label_np = np.where(label_np > 0.5, 1, 0)
-  element_acc = ((pred_np==label_np).sum())/pred_np.shape[1]/pred_np.shape[2]
-  print(element_acc/batch_size)
+  label_np = np.where(label_np > 0.5, 1, 0)
+  pred_np = np.where(pred_np > 0.5, 1, 0)
 
-def accuracy(prediction, label, batch_size, window_size = 1):
+  batch_size = pred_np.shape[0]
+  element_acc = ((pred_np==label_np).sum())/pred_np.shape[1]/pred_np.shape[2]
+  return element_acc/batch_size
+
+def accuracy(prediction, label, window_size = 1):
     #check if window_size is an integer
     #convert each 3D tensor into a 3D numpy array
     pred_np = prediction.numpy()
     label_np = label.numpy() 
     label_np = np.where(label_np > 0.5, 1, 0)
+    pred_np = np.where(pred_np > 0.5, 1, 0)
+    batch_size = pred_np.shape[0]
     #check that the dimensions of the prediction and the label are the same
     if pred_np.shape != label_np.shape:
         print("Error- prediction and label sizes don't match!")
@@ -106,128 +111,128 @@ def accuracy(prediction, label, batch_size, window_size = 1):
           #if (p[j][:, i:i+1].tolist() in window_arr.tolist()) == True: 
             count += 1
     avg_acc = count/(col*batch_size)
-    print("Batch Accuracy:", avg_acc)
+    #print("Batch Accuracy:", avg_acc)
     return avg_acc
 
 """JUNK"""
 
-def accuracy(prediction, label, window_size = 1, batch_size):
-  #initialize count
-  count = 0
-  #check if window_size is an integer
-  #convert each 2D tensor into a 2D numpy array
-  pred_np = prediction.numpy()
-  label_np = label.numpy() 
-  label_np[label_np > 0.5] = 1
-  label_np[label_np <= 0.5] = 0
-  for j in range(batch_size):
+# def accuracy(prediction, batch_size, label, window_size = 1):
+#   #initialize count
+#   count = 0
+#   #check if window_size is an integer
+#   #convert each 2D tensor into a 2D numpy array
+#   pred_np = prediction.numpy()
+#   label_np = label.numpy() 
+#   label_np[label_np > 0.5] = 1
+#   label_np[label_np <= 0.5] = 0
+#   for j in range(batch_size):
     
-  #check that the dimensions of the prediction and the label are the same
-  if pred_np.shape != label_np.shape:
-    print("Error- prediction and label sizes don't match!")
-    return
-  #check that window_size is a positive odd integer 
-  if window_size <= 0:
-    print("Error- window_size is not positive!")
-    return
-  elif isinstance(window_size, int) != True:
-    print("Error- window_size is not an integer!")
-    return
-  elif isinstance(window_size, int) == True:
-    if window_size % 2 == 0:
-      print("Error- window_size is not odd!")
-      return
-  #find the number of frames of each file
-  col = pred_np.shape[1]
-  #check if the values in each column of the prediction are the same for the label within the window_size
-  for i in range(col):
-    #case where window_size is out of bounds (beginning case)
-    if i >=0 and i < int(window_size/2):
-      lower_lim = 0
-      upper_lim = i + int(window_size/2)
-    #case where window_size is out of bounds (end case)
-    elif i >= col - int(window_size/2) and i <= col:
-      lower_lim = i - int(window_size/2)
-      upper_lim = col - 1
-    else:
-      lower_lim = i - int(window_size/2)
-      upper_lim = i + int(window_size/2)
-    window_arr = label_np[:, lower_lim:upper_lim + 1]
-    if (np.transpose(pred_np)[i:i+1].tolist()[0] in np.transpose(window_arr).tolist()) == True: 
-      count += 1
-  return count/col
+#   #check that the dimensions of the prediction and the label are the same
+#   if pred_np.shape != label_np.shape:
+#     print("Error- prediction and label sizes don't match!")
+#     return
+#   #check that window_size is a positive odd integer 
+#   if window_size <= 0:
+#     print("Error- window_size is not positive!")
+#     return
+#   elif isinstance(window_size, int) != True:
+#     print("Error- window_size is not an integer!")
+#     return
+#   elif isinstance(window_size, int) == True:
+#     if window_size % 2 == 0:
+#       print("Error- window_size is not odd!")
+#       return
+#   #find the number of frames of each file
+#   col = pred_np.shape[1]
+#   #check if the values in each column of the prediction are the same for the label within the window_size
+#   for i in range(col):
+#     #case where window_size is out of bounds (beginning case)
+#     if i >=0 and i < int(window_size/2):
+#       lower_lim = 0
+#       upper_lim = i + int(window_size/2)
+#     #case where window_size is out of bounds (end case)
+#     elif i >= col - int(window_size/2) and i <= col:
+#       lower_lim = i - int(window_size/2)
+#       upper_lim = col - 1
+#     else:
+#       lower_lim = i - int(window_size/2)
+#       upper_lim = i + int(window_size/2)
+#     window_arr = label_np[:, lower_lim:upper_lim + 1]
+#     if (np.transpose(pred_np)[i:i+1].tolist()[0] in np.transpose(window_arr).tolist()) == True: 
+#       count += 1
+#   return count/col
 
-gen0 = torch.Generator()
-gen1 = torch.Generator()
+# gen0 = torch.Generator()
+# gen1 = torch.Generator()
 
-gen0 = gen0.manual_seed(0)
-gen1 = gen1.manual_seed(1)
+# gen0 = gen0.manual_seed(0)
+# gen1 = gen1.manual_seed(1)
 
-a = torch.randint(0, 6, (2, 8, 4), generator = gen0)
-#print(a)
+# a = torch.randint(0, 6, (2, 8, 4), generator = gen0)
+# #print(a)
 
-#b = a.detach().clone()
-#print(b)
+# #b = a.detach().clone()
+# #print(b)
 
 
-c = b[0]
-print(c)
-idx = torch.LongTensor([1,1, 1, 1, 1, 1, 1, 1])
-j = torch.arange(c.size(0)).long()
+# c = b[0]
+# print(c)
+# idx = torch.LongTensor([1,1, 1, 1, 1, 1, 1, 1])
+# j = torch.arange(c.size(0)).long()
 
-update_values = torch.LongTensor([-1, -1, -1, -1, -1, -1, -1, -1])
+# update_values = torch.LongTensor([-1, -1, -1, -1, -1, -1, -1, -1])
 
-#c[j, idx] = update_values
+# #c[j, idx] = update_values
 
-d = b[0]
-print(d)
-idxd = torch.LongTensor([0, 1, 2, 3, 4, 5, 6, 7])
-jd = torch.arange(d.size(0)).long()
+# d = b[0]
+# print(d)
+# idxd = torch.LongTensor([0, 1, 2, 3, 4, 5, 6, 7])
+# jd = torch.arange(d.size(0)).long()
 
-update_valuesd = torch.LongTensor([-2, -2, -2, -2, -2, -2, -2, -2])
+# update_valuesd = torch.LongTensor([-2, -2, -2, -2, -2, -2, -2, -2])
 
-d[jd, idxd] = update_valuesd
-print(b)
-#accuracy(a, b, 2, 5)
-elementacc(a, b, 2)
+# d[jd, idxd] = update_valuesd
+# print(b)
+# #accuracy(a, b, 2, 5)
+# elementacc(a, b, 2)
 
-"""- make it take in batches and find the average accuracy for a batch
-- threshold value of 0.5 (decision function) 
-"""
+# """- make it take in batches and find the average accuracy for a batch
+# - threshold value of 0.5 (decision function) 
+# """
 
-accuracy(a, b)
+# accuracy(a, b)
 
-"""Additional function that works but is not required"""
+# """Additional function that works but is not required"""
 
-def accuracy_idx(prediction, label):
-  #convert each 2D tensor into a 2D numpy array
-  pred_np = prediction.numpy()
-  label_np = label.numpy()
-  #check that the dimensions of the prediction and the label are the same
-  if pred_np.shape != label_np.shape:
-    print("Error- prediction and label sizes don't match!")
-    return
-  #find the number of frames of each file
-  col = pred_np.shape[1]
-  #check if the values in each column of the prediction are the same for the label
-  acc_bool = np.all(pred_np == label_np, axis = 0)
-  count = sum(acc_bool)
-  return (count/col)
+# def accuracy_idx(prediction, label):
+#   #convert each 2D tensor into a 2D numpy array
+#   pred_np = prediction.numpy()
+#   label_np = label.numpy()
+#   #check that the dimensions of the prediction and the label are the same
+#   if pred_np.shape != label_np.shape:
+#     print("Error- prediction and label sizes don't match!")
+#     return
+#   #find the number of frames of each file
+#   col = pred_np.shape[1]
+#   #check if the values in each column of the prediction are the same for the label
+#   acc_bool = np.all(pred_np == label_np, axis = 0)
+#   count = sum(acc_bool)
+#   return (count/col)
 
-"""# Some Test Cases (can ignore)"""
+# """# Some Test Cases (can ignore)"""
 
-a = [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18], [19, 20, 21, 22, 23, 24], [25, 26, 27, 28, 29, 30]]
-print(a)
-a = torch.tensor(a)
-print(a)
+# a = [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18], [19, 20, 21, 22, 23, 24], [25, 26, 27, 28, 29, 30]]
+# print(a)
+# a = torch.tensor(a)
+# print(a)
 
-#b = [[0, 1, 4, 0, 0, 3], [0, 7, 10, 0, 0, 9], [0, 13, 16, 0, 0, 15], [0, 19, 22, 0, 0, 21], [0, 25, 28, 0, 0, 27]]
-b = [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18], [19, 20, 21, 22, 23, 24], [25, 26, 27, 28, 29, 30]]
-print(b)
-b = torch.tensor(b)
-print(b)
+# #b = [[0, 1, 4, 0, 0, 3], [0, 7, 10, 0, 0, 9], [0, 13, 16, 0, 0, 15], [0, 19, 22, 0, 0, 21], [0, 25, 28, 0, 0, 27]]
+# b = [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18], [19, 20, 21, 22, 23, 24], [25, 26, 27, 28, 29, 30]]
+# print(b)
+# b = torch.tensor(b)
+# print(b)
 
-a = torch.ones(5, 7, dtype=torch.int16)
-print(a)
-b = torch.zeros(5, 7, dtype=torch.int16)
-print(b)
+# a = torch.ones(5, 7, dtype=torch.int16)
+# print(a)
+# b = torch.zeros(5, 7, dtype=torch.int16)
+# print(b)
