@@ -4,5 +4,6 @@
 - Librosa
 - Matplotlib
 - Numpy
+- Pandas
 - Pretty Midi
 - Tqdm
