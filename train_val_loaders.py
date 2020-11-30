@@ -150,7 +150,7 @@ class _MusicDataset(Dataset):
         # Load data label
         midi = pretty_midi.PrettyMIDI(os.path.join(self.dir,'labels',
                                                    self.list_of_data[index][:-3]+'mid'))
-        piano_roll = midi.get_piano_roll(fs=self.fs)[21:109,:124] # 124 is for 4 seconds out of 8
+        piano_roll = midi.get_piano_roll(fs=self.fs)[21+30:21+30+40,:124] # 124 is for 4 seconds out of 8
         data_label = np.where(piano_roll > 0, 1, 0)
 
         return data_sample, data_label
