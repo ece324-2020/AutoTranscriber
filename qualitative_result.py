@@ -68,16 +68,19 @@ def qualitative_result(net, path, rand=True):
         len_of_path = len(path)
         for i in range(len_of_path):
             if path[-1] == '/' or path[-1] == '\\':
-                path = path[-1]
+                path = path[:-1]
             else:
                 break
         for i in range(len(path)-1,-1,-1):
             if path[i] == '/' or path[i] == '\\':
                 break
 
+##        print(i)
         data_file = path
         data_sample = np.load(path)
-        midi = pretty_midi.PrettyMidi(os.path.join(path[:i],'labels',path[i:-4]+'.mid')) # assume data_file ends with a three letter file type
+##        print(path)
+##        print(os.path.join(path[:i],'labels',path[i+1:-4]+'.mid'))
+        midi = pretty_midi.PrettyMIDI(path[:i-5]+'/labels'+path[i:-4]+'.mid') # assume data_file ends with a three letter file type
         label_sample = midi.get_piano_roll(fs=31)[21:109,:124]
         label_sample = np.where(label_sample > 0, 1, 0)
         
